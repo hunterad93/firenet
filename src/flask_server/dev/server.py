@@ -8,7 +8,7 @@ import os
 
 app = Flask(__name__)
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/Users/adamhunter/Documents/school projs/firenet/data/credentials/firenet-99-53e33ae83064.json'
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/Users/adamhunter/Documents/school projs/firenet/data/credentials/firenet-99-reader.json'
 
 @app.route('/')
 def home():
@@ -16,7 +16,7 @@ def home():
 
 @app.route('/geojson')
 def serve_geojson():
-    geojson_data = download_blob('prediction_imagery', 'countries.geojson')
+    geojson_data = download_blob('prediction_imagery', 'predictions.geojson')
     return Response(geojson_data, mimetype='application/json')
 
 if __name__ == '__main__':
