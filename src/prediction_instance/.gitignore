@@ -1,0 +1,5 @@
+*.npy
+*.pdf
+*.csv
+*.json
+*.geojson

@@ -94,7 +94,7 @@ def select_blobs(blob_names):
 
     return selected
 
-def get_datasets(blob_names, bucket_name='gcp-public-data-goes-16'):
+def get_datasets(blob_names, fs, bucket_name='gcp-public-data-goes-16'):
     # Open each blob as an xarray Dataset and store it in the dictionary under the corresponding channel identifier
     datasets = {}
     for name in blob_names:
@@ -156,18 +156,17 @@ def upload_to_bigquery(prediction_time, goesmask_geojson):
         print('Row inserted successfully.')
 
 
+def main(event, context):
+    # Use fsspec to create a file system
+    fs = fsspec.filesystem('gcs', token=os.environ['GOOGLE_APPLICATION_CREDENTIALS'])
+    blob_names = get_blob_names()
+    selected_blobs = select_blobs(blob_names)
+    datasets = get_datasets(selected_blobs, fs)
+    # Extract the first dataset from the datasets dictionary
+    first_ds_key = next(iter(datasets))
+    first_ds = datasets[first_ds_key]
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = '/Users/adamhunter/Documents/school projs/firenet/data/credentials/firenet-99-writer.json'
-# Use fsspec to create a file system
-fs = fsspec.filesystem('gcs', token=os.environ['GOOGLE_APPLICATION_CREDENTIALS'])
-blob_names = get_blob_names()
-selected_blobs = select_blobs(blob_names)
-datasets = get_datasets(selected_blobs)
-# Extract the first dataset from the datasets dictionary
-first_ds_key = next(iter(datasets))
-first_ds = datasets[first_ds_key]
-
-# Generate GeoJSON points from the first dataset
-timestamp, geojson_str = generate_geojson_points(first_ds)
-# Upload the generated GeoJSON to BigQuery
-upload_to_bigquery(timestamp, geojson_str)
+    # Generate GeoJSON points from the first dataset
+    timestamp, geojson_str = generate_geojson_points(first_ds)
+    # Upload the generated GeoJSON to BigQuery
+    upload_to_bigquery(timestamp, geojson_str)
