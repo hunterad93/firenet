@@ -1,5 +1,4 @@
 
-import os
 import fsspec
 import xarray as xr
 import numpy as np
@@ -9,39 +8,15 @@ from datetime import datetime, timedelta
 import pandas as pd
 from google.cloud import bigquery
 
-def calculate_degrees(file_id):
-    
-    # Read in GOES ABI fixed grid projection variables and constants
-    x_coordinate_1d = file_id.variables['x'][:]  # E/W scanning angle in radians
-    y_coordinate_1d = file_id.variables['y'][:]  # N/S elevation angle in radians
-    projection_info = file_id.variables['goes_imager_projection']
-    lon_origin = projection_info.attrs['longitude_of_projection_origin']
-    H = projection_info.attrs['perspective_point_height'] + projection_info.attrs['semi_major_axis']
-    r_eq = projection_info.attrs['semi_major_axis']
-    r_pol = projection_info.attrs['semi_minor_axis']    
-    
-    # Create 2D coordinate matrices from 1D coordinate vectors
-    x_coordinate_2d, y_coordinate_2d = np.meshgrid(x_coordinate_1d, y_coordinate_1d)
-    
-    # Equations to calculate latitude and longitude
-    lambda_0 = (lon_origin*np.pi)/180.0  
-    a_var = np.power(np.sin(x_coordinate_2d),2.0) + (np.power(np.cos(x_coordinate_2d),2.0)*(np.power(np.cos(y_coordinate_2d),2.0)+(((r_eq*r_eq)/(r_pol*r_pol))*np.power(np.sin(y_coordinate_2d),2.0))))
-    b_var = -2.0*H*np.cos(x_coordinate_2d)*np.cos(y_coordinate_2d)
-    c_var = (H**2.0)-(r_eq**2.0)
-    r_s = (-1.0*b_var - np.sqrt((b_var**2)-(4.0*a_var*c_var)))/(2.0*a_var)
-    s_x = r_s*np.cos(x_coordinate_2d)*np.cos(y_coordinate_2d)
-    s_y = - r_s*np.sin(x_coordinate_2d)
-    s_z = r_s*np.cos(x_coordinate_2d)*np.sin(y_coordinate_2d)
-    
-    # Ignore numpy errors for sqrt of negative number; occurs for GOES-16 ABI CONUS sector data
-    np.seterr(all='ignore')
-    
-    abi_lat = (180.0/np.pi)*(np.arctan(((r_eq*r_eq)/(r_pol*r_pol))*((s_z/np.sqrt(((H-s_x)*(H-s_x))+(s_y*s_y))))))
-    abi_lon = (lambda_0 - np.arctan(s_y/(H-s_x)))*(180.0/np.pi)
-    print(abi_lat)
-    return abi_lat, abi_lon
+def get_lat_lon_mapping(bucket_name, blob_name):
+    fs = fsspec.filesystem('gcs')
+    with fs.open(f'{bucket_name}/{blob_name}') as f:
+        ds = xr.open_dataset(f)
+        lat_mapping = ds['latitude'].values.astype(float)
+        lon_mapping = ds['longitude'].values.astype(float)
+    return lat_mapping, lon_mapping
 
-def get_blob_names(attime=datetime.utcnow(), within=pd.to_timedelta("1H"), bucket_name='gcp-public-data-goes-16'):
+def get_blob_names(attime=datetime.utcnow(), within=pd.to_timedelta("20min"), bucket_name='gcp-public-data-goes-16'):
     if isinstance(attime, str):
         attime = pd.to_datetime(attime)
     if isinstance(within, str):
@@ -50,8 +25,6 @@ def get_blob_names(attime=datetime.utcnow(), within=pd.to_timedelta("1H"), bucke
     # Parameter Setup
     start = attime - within
     end = attime + within
-
-    print(f"Start: {start}, End: {end}")
 
     # Set up Google Cloud Storage client
     client = storage.Client()
@@ -65,9 +38,8 @@ def get_blob_names(attime=datetime.utcnow(), within=pd.to_timedelta("1H"), bucke
         prefix = f'ABI-L2-FDCC/{current_time.year}/{current_time.timetuple().tm_yday:03d}/{current_time.hour:02d}/'
         blobs = bucket.list_blobs(prefix=prefix)
         blob_names.extend([blob.name for blob in blobs])
-        current_time += timedelta(hours=1)  # Increment current_time by 1 hour
+        current_time += timedelta(minutes=20)  # Increment current_time by 20 minutes
 
-    print(blob_names)
     return blob_names
 
 def select_blobs(blob_names):
@@ -96,7 +68,6 @@ def select_blobs(blob_names):
             break
     else:
         raise Exception("No continuous sequence found that matches the expected band order")
-    print(selected)
     return selected
 
 def get_datasets(blob_names, fs, bucket_name='gcp-public-data-goes-16'):
@@ -107,15 +78,13 @@ def get_datasets(blob_names, fs, bucket_name='gcp-public-data-goes-16'):
         f = fs.open(f'{bucket_name}/{name}')
         ds = xr.open_dataset(f, engine='h5netcdf')
         datasets[channel_id] = ds
-    print(datasets)
     return datasets
 
-def generate_geojson_points(ds):
+def generate_geojson_points(ds, lat_mapping, lon_mapping):
     # Process the data to generate GeoJSON
     band_data = ds['DQF'].values
     zero_indices = np.where(band_data == 0)
-    lat, lon = calculate_degrees(ds)
-    zero_lat_lon = lat[zero_indices], lon[zero_indices]
+    zero_lat_lon = lat_mapping[zero_indices], lon_mapping[zero_indices]
     features = []
     for lat, lon in zip(*zero_lat_lon):
         point = geojson.Point((lon, lat))
@@ -162,6 +131,8 @@ def upload_to_bigquery(prediction_time, goesmask_geojson):
 
 
 def GOES_GEOJSON_UPDATE(request):
+    # At the start of your cloud function
+    lat_mapping, lon_mapping = get_lat_lon_mapping('firenet_reference', 'goes16_abi_conus_lat_lon.nc')
     # Use fsspec to create a file system
     fs = fsspec.filesystem('gcs')
     blob_names = get_blob_names()
@@ -177,7 +148,9 @@ def GOES_GEOJSON_UPDATE(request):
     first_ds = datasets[first_ds_key]
 
     # Generate GeoJSON points from the first dataset
-    timestamp, geojson_str = generate_geojson_points(first_ds)
+    timestamp, geojson_str = generate_geojson_points(first_ds, lat_mapping, lon_mapping)
+    # Delete lat_mapping, lon_mapping as they are no longer needed
+    del lat_mapping, lon_mapping
     # Upload the generated GeoJSON to BigQuery
     upload_to_bigquery(timestamp, geojson_str)
 
