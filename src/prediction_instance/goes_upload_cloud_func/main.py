@@ -16,59 +16,28 @@ def get_lat_lon_mapping(bucket_name, blob_name):
         lon_mapping = ds['longitude'].values.astype(float)
     return lat_mapping, lon_mapping
 
-def get_blob_names(attime=datetime.utcnow(), within=pd.to_timedelta("20min"), bucket_name='gcp-public-data-goes-16'):
-    if isinstance(attime, str):
-        attime = pd.to_datetime(attime)
-    if isinstance(within, str):
-        within = pd.to_timedelta(within)
-
-    # Parameter Setup
-    start = attime - within
-    end = attime + within
-
+def get_most_recent_blob_name(bucket_name='gcp-public-data-goes-16'):
     # Set up Google Cloud Storage client
     client = storage.Client()
     bucket = client.get_bucket(bucket_name)
 
+    # Get the current date and time
+    current_time = datetime.utcnow() + timedelta(hours=5)
+
     # Create a range of directories to check. The GOES bucket is
     # organized by hour of day.
     blob_names = []
-    current_time = start
-    while current_time <= end:
-        prefix = f'ABI-L2-FDCC/{current_time.year}/{current_time.timetuple().tm_yday:03d}/{current_time.hour:02d}/'
+    for hours in range(10):  # Check the last 10 hours starting from 5 in future, just to make sure we don't miss anything
+        check_time = current_time - timedelta(hours=hours)
+        prefix = f'ABI-L2-FDCC/{check_time.year}/{check_time.timetuple().tm_yday:03d}/{check_time.hour:02d}/'
         blobs = bucket.list_blobs(prefix=prefix)
         blob_names.extend([blob.name for blob in blobs])
-        current_time += timedelta(minutes=20)  # Increment current_time by 20 minutes
 
-    return blob_names
-
-def select_blobs(blob_names):
     # Sort blob names by timestamp
     blob_names.sort(key=lambda name: name.split('_')[3][1:], reverse=True)  # Extract timestamp after 's'
 
-    # Extract band numbers from blob names
-    try:
-        band_numbers = [int(name.split('_')[1][-2:]) for name in blob_names]
-    except ValueError:
-        # If there is only one band and the band number is a string, return the most recent file
-        return [blob_names[0]]
-
-    # Get unique band numbers and sort them
-    unique_band_numbers = sorted(set(band_numbers))
-
-    # If there is only one unique band number, return the most recent file
-    if len(unique_band_numbers) == 1:
-        return [blob_names[0]]
-
-    # Find the first continuous sequence that matches the expected band order
-    for i in range(len(blob_names) - len(unique_band_numbers) + 1):
-        selected = blob_names[i:i+len(unique_band_numbers)]
-        band_order = [int(name.split('_')[1][-2:]) for name in selected]
-        if band_order == unique_band_numbers:
-            break
-    else:
-        raise Exception("No continuous sequence found that matches the expected band order")
-    return selected
+    # Return the most recent blob name
+    return blob_names[0] if blob_names else None
 
 def get_datasets(blob_names, fs, bucket_name='gcp-public-data-goes-16'):
     # Open each blob as an xarray Dataset and store it in the dictionary under the corresponding channel identifier
@@ -135,7 +104,7 @@ def GOES_GEOJSON_UPDATE(request):
     lat_mapping, lon_mapping = get_lat_lon_mapping('firenet_reference', 'goes16_abi_conus_lat_lon.nc')
     # Use fsspec to create a file system
     fs = fsspec.filesystem('gcs')
-    blob_names = get_blob_names()
+    blob_names = get_most_recent_blob_name()
     selected_blobs = select_blobs(blob_names)
     datasets = get_datasets(selected_blobs, fs)
     if datasets:
@@ -146,7 +115,7 @@ def GOES_GEOJSON_UPDATE(request):
         return
 
     first_ds = datasets[first_ds_key]
-
+    del datasets
     # Generate GeoJSON points from the first dataset
     timestamp, geojson_str = generate_geojson_points(first_ds, lat_mapping, lon_mapping)
     # Delete lat_mapping, lon_mapping as they are no longer needed
