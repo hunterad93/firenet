@@ -110,7 +110,7 @@ def upload_to_bigquery(prediction_time, goesmask_geojson):
 
     # Specify your dataset and table
     dataset_id = 'geojson_predictions'
-    table_id = 'goesmask'
+    table_id = 'goes_mask'
 
     # Get the table
     table = client.dataset(dataset_id).table(table_id)
@@ -122,7 +122,8 @@ def upload_to_bigquery(prediction_time, goesmask_geojson):
     # Prepare the row to be inserted
     row = {
         'prediction_date': prediction_time,
-        'goesmask_geojson': goesmask_geojson,
+        'goes_mask_geojson': goesmask_geojson,
+        'current_utc_time': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),  # Add current UTC time
     }
 
     # Insert the row
