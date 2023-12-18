@@ -9,6 +9,14 @@ import pandas as pd
 from google.cloud import bigquery
 
 def get_lat_lon_mapping(bucket_name, blob_name):
+    """
+    Fetches a dataset from a specified blob in a Google Cloud Storage bucket and extracts latitude and longitude mappings.
+    GOES uses a fixed grid so the mappings are always the same. 
+    
+    :param bucket_name: The name of the Google Cloud Storage bucket to fetch the blob from
+    :param blob_name: The name of the blob to fetch the dataset from
+    :return: A tuple of two numpy arrays representing the latitude and longitude mappings respectively
+    """
     fs = fsspec.filesystem('gcs')
     with fs.open(f'{bucket_name}/{blob_name}') as f:
         ds = xr.open_dataset(f)
@@ -17,6 +25,13 @@ def get_lat_lon_mapping(bucket_name, blob_name):
     return lat_mapping, lon_mapping
 
 def get_most_recent_blob_name(bucket_name='gcp-public-data-goes-16'):
+    """
+    Fetches the name of the most recent blob from a specified Google Cloud Storage bucket.
+    Deals with edge cases where the most recent blob may not be in the most recent hour.
+
+    :param bucket_name: The name of the Google Cloud Storage bucket to fetch the blob from. Default is 'gcp-public-data-goes-16'.
+    :return: The name of the most recent blob. If no blobs are found, returns None.
+    """
     # Set up Google Cloud Storage client
     client = storage.Client()
     bucket = client.get_bucket(bucket_name)
@@ -40,12 +55,30 @@ def get_most_recent_blob_name(bucket_name='gcp-public-data-goes-16'):
     return blob_names[0] if blob_names else None
 
 def get_dataset(blob_name, fs, bucket_name='gcp-public-data-goes-16'):
+    """
+    Opens a specified blob from a Google Cloud Storage bucket as an xarray Dataset.
+
+    :param blob_name: The name of the blob to open
+    :param fs: The fsspec filesystem object to use for opening the blob
+    :param bucket_name: The name of the Google Cloud Storage bucket to fetch the blob from. Default is 'gcp-public-data-goes-16'.
+    :return: An xarray Dataset representing the data in the blob
+    """
     # Open the blob as an xarray Dataset
     f = fs.open(f'{bucket_name}/{blob_name}')
     ds = xr.open_dataset(f, engine='h5netcdf')
     return ds
 
+
 def generate_geojson_points(ds, lat_mapping, lon_mapping):
+    """
+    Processes a dataset to generate GeoJSON points for each location where the 'DQF' value is 0.
+    DQF 0 indicates high confidence that the pixel is a fire.
+
+    :param ds: The xarray Dataset to process
+    :param lat_mapping: A numpy array representing the latitude mapping
+    :param lon_mapping: A numpy array representing the longitude mapping
+    :return: A tuple containing the timestamp from the dataset and a string representing the generated GeoJSON
+    """
     # Process the data to generate GeoJSON
     band_data = ds['DQF'].values
     zero_indices = np.where(band_data == 0)
@@ -65,6 +98,13 @@ def generate_geojson_points(ds, lat_mapping, lon_mapping):
     return timestamp, geojson_str
 
 def upload_to_bigquery(prediction_time, goesmask_geojson):
+    """
+    Uploads a row to a specified BigQuery table. The row contains a prediction time and a GeoJSON string.
+
+    :param prediction_time: The prediction time to include in the row.
+    :param goesmask_geojson: The GeoJSON string to include in the row.
+    :return: None. The function prints a message indicating whether the row was inserted successfully.
+    """
     # Initialize a BigQuery client
     client = bigquery.Client()
 
@@ -96,6 +136,13 @@ def upload_to_bigquery(prediction_time, goesmask_geojson):
 
 
 def GOES_GEOJSON_UPDATE(request):
+    """
+    Main function to update GeoJSON data. It fetches the most recent blob from a GOES-16 bucket,
+    generates GeoJSON points from the blob's dataset, and uploads the GeoJSON to a BigQuery table.
+
+    :param request: The HTTP request that triggered this function. Not used in this function.
+    :return: A string indicating that the function executed successfully and an HTTP status code of 200.
+    """
     # At the start of your cloud function
     lat_mapping, lon_mapping = get_lat_lon_mapping('firenet_reference', 'goes16_abi_conus_lat_lon.nc')
     # Use fsspec to create a file system

@@ -179,6 +179,7 @@ def upload_to_bigquery(acq_date, polygon_geojson):
     row = {
         'prediction_date': acq_date,
         'viirs_mask_geojson': polygon_geojson,
+        'datetime_added': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),  # UTC timestamp of the current moment
     }
 
     # Insert the row
