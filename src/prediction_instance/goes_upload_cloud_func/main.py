@@ -39,15 +39,11 @@ def get_most_recent_blob_name(bucket_name='gcp-public-data-goes-16'):
     # Return the most recent blob name
     return blob_names[0] if blob_names else None
 
-def get_datasets(blob_names, fs, bucket_name='gcp-public-data-goes-16'):
-    # Open each blob as an xarray Dataset and store it in the dictionary under the corresponding channel identifier
-    datasets = {}
-    for name in blob_names:
-        channel_id = name.split('_')[1]
-        f = fs.open(f'{bucket_name}/{name}')
-        ds = xr.open_dataset(f, engine='h5netcdf')
-        datasets[channel_id] = ds
-    return datasets
+def get_dataset(blob_name, fs, bucket_name='gcp-public-data-goes-16'):
+    # Open the blob as an xarray Dataset
+    f = fs.open(f'{bucket_name}/{blob_name}')
+    ds = xr.open_dataset(f, engine='h5netcdf')
+    return ds
 
 def generate_geojson_points(ds, lat_mapping, lon_mapping):
     # Process the data to generate GeoJSON
@@ -104,20 +100,10 @@ def GOES_GEOJSON_UPDATE(request):
     lat_mapping, lon_mapping = get_lat_lon_mapping('firenet_reference', 'goes16_abi_conus_lat_lon.nc')
     # Use fsspec to create a file system
     fs = fsspec.filesystem('gcs')
-    blob_names = get_most_recent_blob_name()
-    selected_blobs = select_blobs(blob_names)
-    datasets = get_datasets(selected_blobs, fs)
-    if datasets:
-        first_ds_key = next(iter(datasets))
-    else:
-        # Handle the empty case, perhaps log an error or return
-        print("No datasets available.")
-        return
-
-    first_ds = datasets[first_ds_key]
-    del datasets
-    # Generate GeoJSON points from the first dataset
-    timestamp, geojson_str = generate_geojson_points(first_ds, lat_mapping, lon_mapping)
+    most_recent_blob = get_most_recent_blob_name()
+    dataset = get_dataset(most_recent_blob, fs)  # Get the dataset for the most recent blob
+    # Generate GeoJSON points from the dataset
+    timestamp, geojson_str = generate_geojson_points(dataset, lat_mapping, lon_mapping)
     # Delete lat_mapping, lon_mapping as they are no longer needed
     del lat_mapping, lon_mapping
     # Upload the generated GeoJSON to BigQuery
