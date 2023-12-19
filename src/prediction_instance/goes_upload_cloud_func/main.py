@@ -123,7 +123,7 @@ def upload_to_bigquery(prediction_time, goesmask_geojson):
     row = {
         'prediction_date': prediction_time,
         'goes_mask_geojson': goesmask_geojson,
-        'current_utc_time': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),  # Add current UTC time
+        'datetime_added': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),  # Add current UTC time
     }
 
     # Insert the row

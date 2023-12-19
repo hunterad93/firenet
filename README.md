@@ -1,2 +1,18 @@
-# firenet
-Repo for operationalizing a UNET convolutional neural net predicting fires in the continental US
+# Fire Prediction Processing
+
+## Overview
+This repository contains cloud functions responsible for fetching, preprocessing, and uploading fire prediction data from VIIRS, GOES, and Firenet to Google BigQuery (GBQ) in geojson format. It additionally includes the code for a cloud function which generates Firenet predictions and stores them as numpy arrays in a google cloud bucket.
+
+## Data Sources
+The raw data is sourced from the following locations:
+- VIIRS: [VIIRS Data](https://firms.modaps.eosdis.nasa.gov/usfs/api/area/)
+- GOES: [GOES Data](https://console.cloud.google.com/storage/browser/gcp-public-data-goes-16)
+
+## Requirements
+This project requires Python 3.9 and the packages listed in `requirements.txt`.
+
+## Uploader Cloud Functions
+The cloud functions are defined in the folders named in accordance with their prediction sources. `goes_upload_cloud_func` includes code for the cloud function that uploads GOES predictions. `viirs_upload_cloud_func` includes the code for the cloud function that uploads VIIRS predictions. `unet_upload_cloud_func` includes the code for firenet upload.
+
+## Deployment
+The cloud functions are deployed on Google Cloud. The deployment configuration is specified in `app.yaml` (replace with your actual filename).
