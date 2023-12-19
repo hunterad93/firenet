@@ -3,6 +3,9 @@
 ## Overview
 This repository contains cloud functions responsible for fetching, preprocessing, and uploading fire prediction data from VIIRS, GOES, and Firenet to Google BigQuery (GBQ) in geojson format. It additionally includes the code for a cloud function which generates Firenet predictions and stores them as numpy arrays in a google cloud bucket.
 
+Find more info, and view the map at the projects website: 
+https://sites.google.com/view/firenet-/home
+
 ## Data Sources
 The raw data is sourced from the following locations:
 - VIIRS: [VIIRS Data](https://firms.modaps.eosdis.nasa.gov/usfs/api/area/)
