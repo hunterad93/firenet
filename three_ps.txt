@@ -1,0 +1,26 @@
+three_ps: a weekly progress report
+
+
+Week 1: Reporting period 1/23/24-1/30/24
+
+Progress: Developed a pipeline to download, reproject, and resample GOES MCIMPC raster data, fixing bugs with spatial metadata not being read and saved during processing steps.
+Problems: Data is excessively large ~ 48gb for each input raster stack. Running this in cloud can get very expensive.
+Plans: Build the data pipeline for a lower-resolution version of the data, this will mean the predictions will be very innacurate but may be worth building as a prototype. Other option is to build it with full resolution but run it very infrequently depending on actual cost.
+Hours: 10
+
+Pre week 1 progress 12/23/23-1/23/24
+
+Progress:
+1. Developed and deployed a Google Cloud Function for pulling GOES FDCC (hot spot characterization) raster data and processing it into geojson, then uploading the geojson to a BigQuery database.
+2. Developed another cloud function that accessed VIIRS hotspot characterization, used DBSCAN algorithm to identify clusters, and uploaded geojson polygons to the BigQuery database.
+3. Developed and deployed a flask server to display geojson predictions with leaflet via uploading from the BigQuery database.
+4. Began work on a website - my digital project deliverable - that will introduce the project and display the leaflet map.
+5. Began work on the firenet inference pipeline, this will download GOES data, use it to output fire predictions as geojson and upload to the BigQuery database.
+
+Problems:
+1. Learning curve with GCP, moving working Python scripts into the cloud and properly managing roles + credentials to give functions proper permissions to access databases.
+2. General issues with raster data, especially when needing to spatially match up differing satellite products in the firenet inference pipeline.
+
+Plans:
+1. Finish developing the firenet inference pipeline.
+2. Continue work on digital product deliverable website.
