@@ -1,5 +1,13 @@
 three_ps: a weekly progress report
 
+Week2: Reporting period 1/30/24-2/6/24
+
+Progress: Dealt with last week's data problems by using a small northwest USA region to reproject everything to. Researched
+adding MODIS data to the map, it is similar to VIIRS so could re use alot of code. Tightened up some documentation.
+Problems: Still trying to decide whether to continue with making the neural net pipeline work vs. just host a map for
+well-developed satellite predictions.
+Plans: Meet with Sean to decide whether working on the firenet pipeline is worth it before continuing.
+Hours: 10
 
 Week 1: Reporting period 1/23/24-1/30/24
 
