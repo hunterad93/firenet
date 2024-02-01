@@ -192,7 +192,8 @@ def upload_to_bigquery(acq_date, polygon_geojson):
         print('Row inserted successfully.')
 
 def VIIRS_GEOJSON_UPDATE(request):
-    # Get the request parameters
+    # Get the request parameters from the cron job request that is sent to the cloud funtion
+    # The GCP cron job is where the API key and bbox are specified
     request_json = request.get_json(silent=True)
 
     api_key = request_json['api_key']
