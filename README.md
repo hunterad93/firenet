@@ -14,8 +14,8 @@ The raw data is sourced from the following locations:
 ## Requirements
 This project requires Python 3.9 and the packages listed in `requirements.txt`.
 
-## Uploader Cloud Functions
-The cloud functions are defined in the folders named in accordance with their prediction sources. `goes_upload_cloud_func` includes code for the cloud function that uploads GOES predictions. `viirs_upload_cloud_func` includes the code for the cloud function that uploads VIIRS predictions. `unet_upload_cloud_func` includes the code for firenet upload.
+## Scratch work
+The scratch work folder includes the work of the data scientist Sean Carter who originally developed firenet, it also includes work by me (Adam Hunter) that was refactored into the production ready cloud functions described below.
 
-## Deployment
-The cloud functions are deployed on Google Cloud. The deployment configuration is specified in `app.yaml` (replace with your actual filename).
+## Prediction Instance Cloud Functions
+The cloud functions are defined in the folders named in accordance with their prediction sources. `goes_upload_cloud_func` includes code for the cloud function that uploads GOES predictions. `viirs_upload_cloud_func` includes the code for the cloud function that uploads VIIRS predictions. `unet_upload_cloud_func` includes the code for firenet upload.
