@@ -4,10 +4,20 @@ Week2: Reporting period 1/30/24-2/6/24
 
 Progress: Dealt with last week's data problems by using a small northwest USA region to reproject everything to. Researched
 adding MODIS data to the map, it is similar to VIIRS so could re use alot of code. Tightened up some documentation.
-Problems: Still trying to decide whether to continue with making the neural net pipeline work vs. just host a map for
-well-developed satellite predictions.
-Plans: Meet with Sean to decide whether working on the firenet pipeline is worth it before continuing.
-Hours: 10
+
+Finally discovered problem causing spatial metadata inconsistencies. The .encoding property of xarray dataset vars
+kept not getting changed, then rioxarray.reproject methods would fail to correctly reproject. Solving this was a huge
+breakthrough and I think I finally understand the complex nested structure of netcdf files.
+
+After the above breakthrough I was able to pass things through in the correct format to the neural net. I developed
+a function to preserve spatial metadata of the chunks that get passed which meant I could georeference the predictions which
+came out of the neural net.
+
+Problems: Something looks wrong with the predictions, but they are at least in the correct spatial area. Im sure this will
+be another problem to solve.
+
+Plans: Meet with Sean to view the first predictions coming out and understand why they look so wrong.
+Hours: 20
 
 Week 1: Reporting period 1/23/24-1/30/24
 
