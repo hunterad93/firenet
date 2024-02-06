@@ -12,8 +12,8 @@ def get_viirs_data(api_key, bbox, date=None):
     Connect with FIRMS API to access VIIRS detection data from a specified date and the day before
     and return it as a GeoDataFrame. If no date is specified, defaults to today.
     
-    :param api_key: str, from NASA email
-    :param bbox: str, bbox of the region of interest in the format "minLongitude,minLatitude,maxLongitude,maxLatitude"
+    :param api_key: str, from NASA email, provided in cron job's request headers
+    :param bbox: str, bbox of the region of interest in the format "minLongitude,minLatitude,maxLongitude,maxLatitude", provided in cron job's request headers
     :param date: str, date in '%Y-%m-%d' format. If not provided, defaults to today.
     :return: GeoDataFrame of VIIRS detection data with columns corresponding to the FIRMS API response
     '''
