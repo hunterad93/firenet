@@ -1,16 +1,12 @@
-.gcloudignore
-# Ignore local .git directories
-.git/
-# Ignore all .env files
-*.env
-# Ignore node_modules
-node_modules/
-# Ignore Python virtual environments
-venv/
-env/
-# Ignore compiled Python files
-*.pyc
-# Ignore temporary files
-*.tmp
-*.temp
-# End Generation Here
+# Ignore everything
+**
+
+# But not these files
+!main.py
+!neuralnet_processing.py
+!postprocessing.py
+!preprocessing.py
+!UNET_initiator.py
+!requirements.txt
+!app.yaml
+!Dockerfile

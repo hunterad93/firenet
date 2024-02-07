@@ -116,3 +116,12 @@ def UNET_GEOJSON_UPDATE(request):
     upload_to_bigquery(polygon_geojson)
 
     return 'GeoJSON updated successfully in BigQuery.'
+
+
+#make into pseudo-flask-app to run with cloud run in a container
+from flask import Flask, request
+app = Flask(__name__)
+
+@app.route('/', methods=['POST'])
+def wrapper():
+    return UNET_GEOJSON_UPDATE(request)
