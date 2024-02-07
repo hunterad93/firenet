@@ -50,7 +50,7 @@ def create_fs():
     Creates a file system object for GCP. 
     Returns: File system object. fs can be interacted with as though it were a local file system.
     """
-    fs = fsspec.filesystem('gcs', token=os.environ['GOOGLE_APPLICATION_CREDENTIALS'])
+    fs = fsspec.filesystem('gcs')
     return fs
 
 

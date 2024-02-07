@@ -116,5 +116,3 @@ def UNET_GEOJSON_UPDATE(request):
     upload_to_bigquery(polygon_geojson)
 
     return 'GeoJSON updated successfully in BigQuery.'
-
-UNET_GEOJSON_UPDATE(0)
