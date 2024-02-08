@@ -9,6 +9,7 @@ from google.cloud import storage
 from io import BytesIO
 
 
+
 def load_unet_model(bucket_name='firenet_reference', blob_name='model2.pt'):
     # Set up Google Cloud Storage client
     client = storage.Client()

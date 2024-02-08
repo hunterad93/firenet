@@ -1,3 +1,0 @@
-service: firenet-uploader
-runtime: python311
-entrypoint: gunicorn -b :$PORT main:app

@@ -3,29 +3,21 @@ import neuralnet_processing as nn
 import postprocessing as post
 from google.cloud import bigquery
 from datetime import datetime
+import gc #using this to manually free resources mid-function
 
 def preprocess_data():
     print('preprocessing')
-    # Selects the most recent hour's worth of satellite imagery blobs from GCP
-    selected_blobs = pre.select_blobs()
     # Creates a file system object for interacting with GCP as if it were a local file system
     fs = pre.create_fs()
     # Downloads and processes the selected blobs in parallel to create a median image dataset
-    median_ds = pre.create_median_image_parallel(selected_blobs, fs)
-    # Downloads preprocessed landfire layers
-    landfire_layers = pre.download_landfire_layers(fs)
-    # Reprojects the median dataset to match the spatial reference of the landfire layers
-    reprojected_median_ds = pre.reproject_dataset(median_ds, landfire_layers)
-    # Adds additional features to the dataset by calculating ratios of spectral channels
-    reprojected_median_ds = pre.engineer_features(reprojected_median_ds)
-    # Merges the GOES dataset with the landfire layers into a single dataset
-    stacked_ds = pre.stack_datasets(reprojected_median_ds, landfire_layers)
-    # Removes unnecessary variables from the dataset to match the original training data structure
-    stacked_ds = pre.prune_dataset(stacked_ds)
+    stacked_ds = pre.download_blob(fs)
+
     # Creates a spatial template from the dataset, preserving spatial metadata but with NaN values
     template = pre.create_spatial_template(stacked_ds)
     # Extracts the data variables as a 3D NumPy array from the xarray dataset
     npy_array = pre.extract_data_as_array(stacked_ds)
+    del stacked_ds  # Free up memory
+    gc.collect()
     # Breaks down the NumPy array into smaller chunks for processing or model input
     chunks = pre.chunk_ndarray(npy_array)
     return template, chunks, npy_array.shape[-2:]
@@ -117,11 +109,5 @@ def UNET_GEOJSON_UPDATE(request):
 
     return 'GeoJSON updated successfully in BigQuery.'
 
-
-#make into pseudo-flask-app to run with cloud run in a container
-from flask import Flask, request
-app = Flask(__name__)
-
-@app.route('/', methods=['POST'])
-def wrapper():
-    return UNET_GEOJSON_UPDATE(request)
+# Leave as is for cloud function
+# UNET_GEOJSON_UPDATE(0) #uncomment this for local testing

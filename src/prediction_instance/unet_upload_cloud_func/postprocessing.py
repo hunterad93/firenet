@@ -3,6 +3,9 @@ import geopandas as gpd
 from shapely.geometry import Point, MultiPoint
 import numpy as np
 
+#This .py holds the functions that takes mosaick and clusters fire booleans, draws polygons around them, uploads them as geojson strings to GBQ.
+
+
 def stitch_chunks(tensors, original_shape):
     # Assuming processed_chunks is a list of 2D arrays (Height, Width)
     # and original_shape is the shape of the 2D plane of the original array (Height, Width)
@@ -118,6 +121,8 @@ def cluster_fires(gdf, eps=0.01, min_samples=5):
 
     # Add cluster labels to the dataframe
     gdf['label'] = db.labels_
+      # Filter out noise points
+    gdf = gdf[gdf['label'] != -1]
 
     return gdf
 
@@ -138,5 +143,6 @@ def create_cluster_polygons(gdf):
 
     # Convert the GeoDataFrame to a GeoJSON string
     polygon_geojson = polygon_gdf.to_json()
+
 
     return polygon_geojson
