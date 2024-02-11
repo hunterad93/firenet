@@ -1,5 +1,22 @@
 three_ps: a weekly progress report
 
+Week 3: Reporting period 2/6/24-2/13/24
+
+Progress: Successfully managed to get the firenet inference pipeline fully operational, creating a seamless automated
+ cloud pipeline. This pipeline is now composed of two cloud functions; the first one, equipped with 16GB of RAM,
+  is responsible for generating the input .nc file. The second function, a 32GB RAM containerized function, runs
+the neural net processing and uploads the resulting geojson to Google BigQuery (GBQ). This pretty much is the completion
+of my project as I laid it out, but there are some issues I might fix time permitting.
+
+Problems: Main problem is that the model needs to be retrained. Secondary problem is that the cloud function takes way more
+ram than expected, I think there is some issue with the containerized function having a memory leak.
+
+Plans: I might work on retraining, I will probably leave the memory leak issue alone for a while and only worry about that once
+the model predictions seem more accurate.
+
+Hours: 25
+
+
 Week2: Reporting period 1/30/24-2/6/24
 
 Progress: Dealt with last week's data problems by using a small northwest USA region to reproject everything to. Researched
