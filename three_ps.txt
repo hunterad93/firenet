@@ -1,5 +1,16 @@
 three_ps: a weekly progress report
 
+Week 4: Reporting period 2/13/24-2/20/24
+
+Progress: Dicussed how to retrain model with Sean - project collaborator, and made some changes to digital project website.
+
+Problems: No problems just juggling other tasks
+
+Plans: Going to start writing paper before revisiting retraining
+
+Hours: 5
+
+
 Week 3: Reporting period 2/6/24-2/13/24
 
 Progress: Successfully managed to get the firenet inference pipeline fully operational, creating a seamless automated
