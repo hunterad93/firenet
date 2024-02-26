@@ -16,6 +16,7 @@ def preprocess_data():
     template = pre.create_spatial_template(stacked_ds)
     # Extracts the data variables as a 3D NumPy array from the xarray dataset
     npy_array = pre.extract_data_as_array(stacked_ds)
+    print("Shape of npy_array:", npy_array.shape)
     del stacked_ds  # Free up memory
     gc.collect()
     # Breaks down the NumPy array into smaller chunks for processing or model input

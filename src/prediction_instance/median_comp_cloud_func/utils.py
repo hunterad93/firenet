@@ -21,7 +21,7 @@ def select_blobs(bucket_name='gcp-public-data-goes-16'):
     """
     # Get the current time
     attime = datetime.now()
-
+    
     # Set up Google Cloud Storage client
     client = storage.Client()
     bucket = client.get_bucket(bucket_name)
