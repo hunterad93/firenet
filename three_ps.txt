@@ -1,5 +1,18 @@
 three_ps: a weekly progress report
 
+Week 5: Reporting period 2/20/24-2/27/24
+
+Progress: Spent this week writing the first draft of my capstone report.
+
+Problems: No problems encountered.
+
+Plans: Plan to finish the draft in the next two weeks, and if I have time start putting together
+the model retraining pipeline. Trying to prioritize having a good finalized project to present over
+improving the model for the time being.
+
+Hours: 12
+
+
 Week 4: Reporting period 2/13/24-2/20/24
 
 Progress: Dicussed how to retrain model with Sean - project collaborator, and made some changes to digital project website.
