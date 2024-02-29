@@ -29,3 +29,6 @@ The scratch work folder includes the work of the data scientist Sean Carter who 
 
 ## Prediction Instance Cloud Functions
 The cloud functions are defined in the folders named in accordance with their prediction sources. `goes_upload_cloud_func` includes code for the cloud function that uploads GOES predictions. `viirs_upload_cloud_func` includes the code for the cloud function that uploads VIIRS predictions. `unet_upload_cloud_func` includes the code for firenet upload.
+
+## Reporting Document
+Check out `capstone_draft.docx` for the most recent draft of my capstone writeup.
