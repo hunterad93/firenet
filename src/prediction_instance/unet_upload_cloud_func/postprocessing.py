@@ -43,7 +43,7 @@ def reproject_stitched_dataset(template):
     
     return reprojected_template
 
-def threshold_top_1_percent(dataset, threshold = 3):
+def threshold_top_1_percent(dataset, threshold = 1):
     """
     Thresholds the given data variable in the dataset, setting the top 1% of values to 1 and the rest to 0.
     

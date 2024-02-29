@@ -33,7 +33,7 @@ def run_neuralnet(chunks):
     
     return prediction_tensors
 
-def postprocess_data(prediction_tensors, original_shape, template, eps=0.01, min_samples=5, threshold=3):
+def postprocess_data(prediction_tensors, original_shape, template, eps=0.01, min_samples=5, threshold=1):
     print('postprocessing')
     # Stitch the processed chunks together
     stitched = post.stitch_chunks(prediction_tensors, original_shape)

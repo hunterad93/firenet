@@ -62,7 +62,7 @@ def create_spatial_template(dataset):
     first_var_name = list(template.data_vars)[0]
     first_var = template[first_var_name]
     
-    # Create a 0-filled template of the first variable
+    # Create a nan-filled template of the first variable
     nan_template = xr.full_like(first_var, fill_value=np.nan)
     
     # Remove all data variables from the template
