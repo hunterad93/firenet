@@ -1,5 +1,18 @@
 three_ps: a weekly progress report
 
+Week 6: Reporting period 2/27/24-3/5/24
+
+Progress: I focused on integrating MODIS classification polygons into the pipeline. 
+This addition will allow another high resolution comparison for Firenet predictions, following 
+the recommendations from Corinne and James.
+
+Problems: None
+
+Plans: Probably going to refine retraining plan more.
+
+Hours: 6
+
+
 Week 5: Reporting period 2/20/24-2/27/24
 
 Progress: Spent this week writing the first draft of my capstone report.
