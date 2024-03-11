@@ -1,5 +1,16 @@
 three_ps: a weekly progress report
 
+Week 7: Reporting period 3/5/24-3/12/24
+
+Progress: Writing Capstone document, and improving digital product.
+
+Problems: No significant problems were encountered this week.
+
+Plans: Finish draft soon
+
+Hours: 5
+
+
 Week 6: Reporting period 2/27/24-3/5/24
 
 Progress: I focused on integrating MODIS classification polygons into the pipeline. 
