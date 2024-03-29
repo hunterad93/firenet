@@ -8,6 +8,11 @@ Firenet bridges this gap by being trained on VIIRS data and using GOES data as i
 
 The primary goal of Firenet is to demonstrate the effectiveness of integrating diverse satellite data into a neural network model for improved fire detection and prediction. With sufficient resources for ongoing development, Firenet has the potential to become an indispensable tool for firefighting agencies, offering early warnings and supporting quicker response times and more effective fire management strategies.
 
+# Video Overview 🎥
+
+
+[![YouTube video player](https://img.youtube.com/vi/DTYgxgTlXcU/0.jpg)](https://www.youtube.com/watch?v=DTYgxgTlXcU)
+
 ## Repository Overview
 This repository contains cloud functions responsible for fetching, preprocessing, and uploading fire prediction data from VIIRS, GOES, and Firenet to Google BigQuery (GBQ) in geojson format. It additionally includes the code for a cloud function which generates Firenet predictions and stores them as numpy arrays in a google cloud bucket.
 
