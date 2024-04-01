@@ -1,5 +1,16 @@
 three_ps: a weekly progress report
 
+Week 10: Reporting period 3/26/24-4/2/24
+
+Progress: Worked on the digital project and developed a cloud function for the populationexplorer.com collaboration.
+
+Problems: None
+
+Plans: Continue working with populationexplorer to integrate active fires with their maps, rewrite paper once feedback comes.
+
+Hours: 20
+
+
 Week 9: Reporting period 3/19/24-3/26/24
 
 Progress: Completed the Capstone document.
