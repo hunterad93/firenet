@@ -1,4 +1,16 @@
 three_ps: a weekly progress report
+
+Week 12: Reporting period 4/9/24-4/16/24
+
+Progress: Spent time on peer review, code submissions, and made edits to the paper.
+
+Problems: None
+
+Plans: Finalize the paper and prepare for the presentation.
+
+Hours: 8
+
+
 Week 11: Reporting period 4/2/24-4/9/24
 
 Progress: Revised the Capstone draft and worked on the digital product. Continued collaboration with populationexplorer.com
