@@ -1,7 +1,7 @@
 # Video Overview 🎥
 
 
-[![YouTube video player](https://img.youtube.com/vi/DTYgxgTlXcU/0.jpg)](https://www.youtube.com/watch?v=DTYgxgTlXcU)
+[![YouTube video player](https://img.youtube.com/vi/DTYgxgTlXcU/0.jpg)](https://www.youtube.com/watch?v=hF4GIpFAo24)
 ## What is Firenet?
 
 Firenet is a state-of-the-art neural network model designed to enhance wildfire detection and monitoring capabilities by leveraging the strengths of both geostationary and low Earth orbit satellite data. While geostationary satellites like GOES provide continuous monitoring with high temporal resolution, they are limited by lower spatial resolution. Conversely, the VIIRS satellite offers high spatial resolution but with lower temporal frequency, revisiting the same area only every 12 hours.
