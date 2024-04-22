@@ -4,3 +4,5 @@ requests
 scikit-learn
 shapely
 google-cloud-bigquery
+google-cloud-storage
+simplekml
