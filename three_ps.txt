@@ -1,5 +1,16 @@
 three_ps: a weekly progress report
 
+Week 13: Reporting period 4/16/24-4/23/24
+
+Progress: Worked 10 hours on the digital project and continued collaboration with populationexplorer.com.
+
+Problems: None
+
+Plans: Finalize deliverables, turn over pipeline to populationexplorer.com.
+
+Hours: 10
+
+
 Week 12: Reporting period 4/9/24-4/16/24
 
 Progress: Spent time on peer review, code submissions, and made edits to the paper.
