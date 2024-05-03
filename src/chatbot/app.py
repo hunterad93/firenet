@@ -3,9 +3,6 @@ import streamlit as st
 from openai import OpenAI
 import time
 
-# Set up the OpenAI client
-# import os
-# client = OpenAI(api_key=os.getenv('OPENAI_API_KEY')) 
 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 assistant_id = "asst_fNOMurA8WDwUTCQyo9gkzmET"
 
@@ -19,7 +16,6 @@ def get_filename(file_id):
     try:
         # Retrieve the file metadata from OpenAI
         file_metadata = client.files.retrieve(file_id)
-        print(file_metadata)
         # Extract the filename from the metadata
         filename = file_metadata.filename
         return filename
@@ -65,10 +61,10 @@ def stream_generator(prompt, thread_id):
                                 indexes = f"from index {annotation.start_index} to {annotation.end_index}]"
                                 text_value = f" **{citation_info + indexes}**"
                         partial_response += text_value
-                        sentences = partial_response.split('. ')
-                        for sentence in sentences[:-1]:  # Yield all but the last incomplete sentence
-                            yield sentence + '. '
-                        partial_response = sentences[-1]  # Keep the last part for the next chunk
+                        words = partial_response.split(' ')
+                        for word in words[:-1]:  # Yield all but the last incomplete word
+                            yield word + ' '
+                        partial_response = words[-1]  # Keep the last part for the next chunk
             else:
                 pass
         if partial_response:
