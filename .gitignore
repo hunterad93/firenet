@@ -28,3 +28,4 @@
 good_outputs.txt
 .DS_Store
 **/.DS_Store
+*.toml
