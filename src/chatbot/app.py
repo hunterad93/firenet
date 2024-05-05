@@ -71,8 +71,9 @@ def stream_generator(prompt, thread_id):
             yield partial_response  # Yield any remaining text
 
 # Streamlit interface
-st.set_page_config(page_icon=":speech_balloon:")
-st.title("Discuss Firenet With ChatGPT")
+st.set_page_config(page_icon="🔥")
+st.title("🔥 Discuss Firenet With ChatGPT 🔥")
+
 # Chat interface
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -96,6 +97,7 @@ if prompt:
         full_response = ""
         for chunk in stream_generator(prompt, thread_id):
             full_response += chunk
-            response_container.markdown(full_response)  # Update the container with the latest full response
+            # Update the container with the latest full response, adding fire emojis
+            response_container.markdown("🔥 " + full_response)
 
     st.session_state.messages.append({"role": "assistant", "content": full_response})
